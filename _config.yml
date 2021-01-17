@@ -1,0 +1,13 @@
+# Site settings
+title: powerbash
+email: contact@powerbash.org
+description: > # this means to ignore newlines until "baseurl:"
+  powerbash is a pure bash powerline-style bash prompt. it is fast and feature rich.
+baseurl: "/" # the subpath of your site, e.g. /blog/
+url: "https://powerbash.org" # the base hostname & protocol for your site
+
+twitter_username: napalm255
+github_username: napalm255
+
+# Build settings
+markdown: kramdown
