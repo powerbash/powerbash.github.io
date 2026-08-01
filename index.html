@@ -55,13 +55,14 @@
       <p class="eyebrow">install</p>
       <h2>Into your own account.</h2>
       <p class="lede">powerbash needs no privileges and touches nothing outside your
-        home directory. Pick whichever of these you already use.</p>
+        home directory. Use Homebrew if you have it — upgrades then come along with
+        everything else. The other two are for machines that do not.</p>
     </div>
 
     <div class="methods">
       <article class="method">
         <div class="method-text">
-          <h3>Homebrew</h3>
+          <h3>Homebrew <span class="tag">recommended</span></h3>
           <p>macOS or Linux. Upgrades along with everything else you have installed.</p>
         </div>
 <pre>brew install powerbash/powerbash/powerbash</pre>
@@ -70,8 +71,9 @@
       <article class="method">
         <div class="method-text">
           <h3>Install script</h3>
-          <p>Downloads the script and wires it into your shell startup file. Run it
-            again any time to upgrade, or pass <code>uninstall</code> to remove it.</p>
+          <p>For machines without Homebrew. Downloads the script and wires it into
+            your shell startup file. Run it again any time to upgrade, or pass
+            <code>uninstall</code> to remove it.</p>
         </div>
 <pre>curl -s https://get.powerbash.org | bash</pre>
       </article>
