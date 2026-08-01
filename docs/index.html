@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="powerbash documentation: installing, every subcommand, the configuration variables, performance on slow filesystems, and uninstalling.">
+<meta name="color-scheme" content="light dark">
+<title>Documentation — powerbash</title>
+<link rel="icon" href="../favicon.ico">
+<link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="masthead">
+  <div class="wrap">
+    <a class="brand" href="/">powerbash</a>
+    <nav aria-label="Main">
+      <a href="/#install">Install</a>
+      <a href="/#build">Build a prompt</a>
+      <a href="/docs/" aria-current="page">Docs</a>
+      <a href="https://github.com/napalm255/powerbash">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap docs-layout">
+
+<nav class="toc" aria-label="On this page">
+  <h2>On this page</h2>
+  <ul>
+    <li><a href="#requirements">Requirements</a></li>
+    <li><a href="#install">Install</a></li>
+    <li><a href="#global">Multi-user installs</a></li>
+    <li><a href="#upgrading">Upgrading</a></li>
+  </ul>
+  <h2>Commands</h2>
+  <ul>
+    <li><a href="#prompt">prompt</a></li>
+    <li><a href="#path">path</a></li>
+    <li><a href="#git">git</a></li>
+    <li><a href="#segments">Other segments</a></li>
+    <li><a href="#term">term</a></li>
+    <li><a href="#other">help, version, reload</a></li>
+  </ul>
+  <h2>Reference</h2>
+  <ul>
+    <li><a href="#configuration">Configuration</a></li>
+    <li><a href="#saving">Saving settings</a></li>
+    <li><a href="#performance">Slow filesystems</a></li>
+    <li><a href="#uninstall">Uninstall</a></li>
+  </ul>
+</nav>
+
+<main id="main" class="docs">
+
+<h1>Documentation</h1>
+
+<p class="lede">powerbash is a single bash script that you source into your shell. The
+<code>powerbash</code> command configures it, everything it does is a
+<code>POWERBASH_*</code> environment variable, and <code>[tab]</code> completes all of
+it.</p>
+
+<h2 id="requirements">Requirements</h2>
+
+<ul>
+  <li><strong>bash 3.2 or newer.</strong> That includes the <code>/bin/bash</code>
+    that ships with macOS, so no Homebrew bash is required. Bash 5.1+ is used
+    automatically where it helps (the array form of <code>PROMPT_COMMAND</code>).</li>
+  <li><strong>A UTF-8 locale</strong>, for the <code>»</code>, <code>⇡</code>,
+    <code>⇣</code>, and <code>▶</code> glyphs. No patched font needed.</li>
+  <li><code>tput</code> for colors and <code>git</code> for the git segment. Both are
+    optional — without <code>tput</code> the prompt renders uncolored, and without
+    <code>git</code> the git segment is skipped.</li>
+</ul>
+
+<p>Runs on Linux, macOS, and WSL.</p>
+
+<h2 id="install">Install</h2>
+
+<p>All three of these install into your own account. None of them need root.</p>
+
+<h3>Homebrew</h3>
+
+<pre>brew install powerbash/powerbash/powerbash</pre>
+
+<p>Then add the line the caveats print to your startup file:</p>
+
+<pre>pb="$(brew --prefix powerbash)/share/powerbash/powerbash.sh"
+echo "source $pb" &gt;&gt; ~/.bashrc</pre>
+
+<h3>Install script</h3>
+
+<pre>curl -s https://get.powerbash.org | bash</pre>
+
+<p>Downloads the script to <code>~/.local/share/powerbash/</code>, then either links it
+into <code>~/.bashrc.d/</code> if you have that directory or appends a marked block to
+your startup file. Run it again to upgrade. It refuses to run as root.</p>
+
+<h3>By hand</h3>
+
+<pre>mkdir -p ~/.local/share/powerbash
+cd ~/.local/share/powerbash
+curl -LsO https://download.powerbash.org/powerbash.sh
+echo 'source ~/.local/share/powerbash/powerbash.sh' &gt;&gt; ~/.bashrc</pre>
+
+<p>On <strong>macOS</strong>, Terminal.app and iTerm2 start <em>login</em> shells, which
+read <code>~/.bash_profile</code> rather than <code>~/.bashrc</code>. Use that file
+instead.</p>
+
+<p>On <strong>Fedora and RHEL</strong>, the stock <code>~/.bashrc</code> already loops
+over <code>~/.bashrc.d</code>, so you can drop the script in there and skip the
+<code>source</code> line entirely:</p>
+
+<pre>mkdir -p ~/.bashrc.d
+curl -Ls https://download.powerbash.org/powerbash.sh -o ~/.bashrc.d/powerbash.sh</pre>
+
+<p>Put the <code>source</code> line near the <em>end</em> of your startup file, so
+powerbash sees any <code>PROMPT_COMMAND</code> set by other tools and can cooperate
+with them. Then start a new shell, or run <code>exec bash</code>.</p>
+
+<h2 id="global">Multi-user installs</h2>
+
+<div class="callout">
+  <p><strong>This is discouraged.</strong> A per-user install upgrades without root,
+  affects only you, and lets everyone on the machine keep the prompt they want. A
+  <code>/etc/profile.d</code> install does none of that, and there is no uninstaller
+  for it.</p>
+</div>
+
+<p>If you still want one, it is Linux only — macOS has no <code>/etc/profile.d</code>
+loop:</p>
+
+<pre>sudo curl -Ls https://download.powerbash.org/powerbash.sh -o /etc/profile.d/z_powerbash.sh
+sudo chmod 0644 /etc/profile.d/z_powerbash.sh</pre>
+
+<p>The <code>z_</code> prefix matters: powerbash is most consistent when it is the last
+profile.d script to run.</p>
+
+<p>Two caveats. On Debian and Ubuntu, <code>/etc/profile.d/</code> is sourced only for
+<em>login</em> shells, so interactive non-login shells will not pick it up; Fedora and
+RHEL source it for both. And the script exits immediately when run under a non-bash
+shell such as <code>dash</code>, so it is safe to leave there either way.</p>
+
+<h2 id="upgrading">Upgrading</h2>
+
+<table>
+  <thead>
+    <tr><th scope="col">Installed with</th><th scope="col">Upgrade with</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Homebrew</td><td><code>brew upgrade powerbash</code></td></tr>
+    <tr><td>Install script</td><td><code>curl -s https://get.powerbash.org | bash</code></td></tr>
+    <tr><td>By hand</td><td>Re-run the same <code>curl</code> command</td></tr>
+  </tbody>
+</table>
+
+<p>Your saved settings are not touched by any of these.</p>
+
+<h2 id="prompt">prompt</h2>
+
+<pre>powerbash prompt on       <span class="hint"># enable the powerbash prompt</span>
+powerbash prompt off      <span class="hint"># minimal '$ ' prompt</span>
+powerbash prompt system   <span class="hint"># restore the prompt you had before powerbash</span></pre>
+
+<h2 id="path">path</h2>
+
+<pre>powerbash path off        <span class="hint"># hide the path segment</span>
+powerbash path full       <span class="hint"># /full/path/to/no/where</span>
+powerbash path working    <span class="hint"># where                     (default)</span>
+powerbash path parted     <span class="hint"># /full/.../no/where</span>
+powerbash path short      <span class="hint"># ..ull/path/to/no/where</span>
+powerbash path mini       <span class="hint"># /f/p/t/n/where</span></pre>
+
+<p><code>short</code> truncates to <code>POWERBASH_PATH_SHORT_LENGTH</code> characters,
+20 by default. Adjust it with:</p>
+
+<pre>powerbash path short add          <span class="hint"># lengthen by 1</span>
+powerbash path short add 5        <span class="hint"># lengthen by 5</span>
+powerbash path short subtract 5   <span class="hint"># shorten by 5 (never below 1)</span></pre>
+
+<p>The current directory always renders as <code>~</code> when it is your home
+directory, in every mode.</p>
+
+<h2 id="git">git</h2>
+
+<pre>powerbash git on
+powerbash git off
+powerbash git skip /mnt/:/net/   <span class="hint"># skip git in these path prefixes</span>
+powerbash git timeout 1          <span class="hint"># give up on git after 1 second</span>
+powerbash git timeout 0          <span class="hint"># disable the timeout (default)</span></pre>
+
+<p>The segment shows the current branch name, or a tag or short SHA when the head is
+detached. <code>+</code> means the working tree has uncommitted changes;
+<code>⇡</code> and <code>⇣</code> count the commits by which the branch is ahead of
+and behind its remote.</p>
+
+<p>See <a href="#performance">slow filesystems</a> for when to reach for
+<code>skip</code> and <code>timeout</code>.</p>
+
+<h2 id="segments">Other segments</h2>
+
+<pre>powerbash user on|off              <span class="hint"># username</span>
+powerbash host on|off|auto         <span class="hint"># hostname (auto = only over ssh)</span>
+powerbash jobs on|off              <span class="hint"># background job count</span>
+powerbash symbol on|off            <span class="hint"># $ / # prompt symbol</span>
+powerbash rc on|off                <span class="hint"># return code, shown when non-zero</span>
+powerbash py virtualenv on|off|icon|short</pre>
+
+<p>For <code>py virtualenv</code>: <code>on</code> shows the icon and the full
+environment name, <code>short</code> shows the icon and the first five characters, and
+<code>icon</code> shows only the icon. Conda environments are detected the same way as
+Python ones.</p>
+
+<h2 id="term">term</h2>
+
+<pre>powerbash term xterm|xterm-256color|screen|screen-256color</pre>
+
+<p>Sets <code>TERM</code> and recomputes the color palette. powerbash uses the 256-color
+palette when the terminal reports 256 colors or more, and an 8-color palette
+otherwise.</p>
+
+<h2 id="other">help, version, reload</h2>
+
+<pre>powerbash help      <span class="hint"># usage</span>
+powerbash version   <span class="hint"># version</span>
+powerbash reload    <span class="hint"># re-source ~/.bashrc (or ~/.bash_profile)</span></pre>
+
+<p>Run <code>powerbash help</code> at any time for the full list, and use
+<code>[tab]</code> completion — it knows every subcommand and every value.</p>
+
+<h2 id="configuration">Configuration</h2>
+
+<p>Every setting is an environment variable. The <code>powerbash</code> command just
+sets them, so you can also set them directly in your startup file <em>before</em>
+sourcing <code>powerbash.sh</code>.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Variable</th>
+      <th scope="col">Values</th>
+      <th scope="col">Default</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>POWERBASH_USER</code></td><td><code>on</code>, <code>off</code></td><td><code>on</code></td></tr>
+    <tr><td><code>POWERBASH_HOST</code></td><td><code>on</code>, <code>off</code>, <code>auto</code></td><td><code>auto</code></td></tr>
+    <tr><td><code>POWERBASH_PATH</code></td><td><code>off</code>, <code>full</code>, <code>working</code>, <code>parted</code>, <code>mini</code>, <code>short</code></td><td><code>working</code></td></tr>
+    <tr><td><code>POWERBASH_PATH_SHORT_LENGTH</code></td><td>positive integer</td><td><code>20</code></td></tr>
+    <tr><td><code>POWERBASH_GIT</code></td><td><code>on</code>, <code>off</code></td><td><code>on</code></td></tr>
+    <tr><td><code>POWERBASH_GIT_SKIP_PATHS</code></td><td>colon-separated path prefixes</td><td><code>/mnt/</code> on WSL, otherwise empty</td></tr>
+    <tr><td><code>POWERBASH_GIT_TIMEOUT</code></td><td>seconds, or empty/<code>0</code> to disable</td><td>empty</td></tr>
+    <tr><td><code>POWERBASH_JOBS</code></td><td><code>on</code>, <code>off</code></td><td><code>on</code></td></tr>
+    <tr><td><code>POWERBASH_SYMBOL</code></td><td><code>on</code>, <code>off</code></td><td><code>on</code></td></tr>
+    <tr><td><code>POWERBASH_RC</code></td><td><code>on</code>, <code>off</code></td><td><code>on</code></td></tr>
+    <tr><td><code>POWERBASH_PY_VIRTUALENV</code></td><td><code>on</code>, <code>off</code>, <code>icon</code>, <code>short</code></td><td><code>on</code></td></tr>
+  </tbody>
+</table>
+
+<h2 id="saving">Saving your settings</h2>
+
+<p>Changes made with the <code>powerbash</code> command apply to the current shell only.
+To keep them:</p>
+
+<pre>powerbash config save     <span class="hint"># write settings to ~/.config/powerbashrc</span>
+powerbash config load     <span class="hint"># re-read that file</span>
+powerbash config default  <span class="hint"># delete the file and reset to defaults</span></pre>
+
+<p><code>~/.config/powerbashrc</code> is loaded automatically at startup when it exists.
+It is a plain list of <code>NAME=value</code> lines, and only the variables in the table
+above are ever written or read back — the file is parsed, never sourced, so a
+hand-edited or tampered one cannot put anything else into your environment.</p>
+
+<h2 id="performance">Performance on slow filesystems</h2>
+
+<p>Under WSL, git operations against the Windows filesystem (<code>/mnt/c</code> and
+friends) are far slower than on the Linux filesystem and can visibly delay the prompt.
+powerbash defaults <code>POWERBASH_GIT_SKIP_PATHS</code> to <code>/mnt/</code> when it
+detects WSL, which suppresses the git segment there at no cost.</p>
+
+<p>Three options, cheapest first:</p>
+
+<pre>powerbash git skip /mnt/    <span class="hint"># no git lookup under these prefixes (free)</span>
+powerbash git timeout 1     <span class="hint"># run git, but give up after 1 second</span>
+powerbash git off           <span class="hint"># disable the git segment entirely</span></pre>
+
+<p><code>git timeout</code> requires <code>timeout</code> from GNU coreutils. It is
+present on most Linux distributions; on macOS, <code>brew install coreutils</code>
+provides it as <code>gtimeout</code>, which powerbash finds on its own. Without either,
+the command tells you so rather than silently doing nothing.</p>
+
+<p>The timeout costs roughly a millisecond per prompt with GNU <code>timeout</code> —
+but some other <code>timeout</code> implementations are far slower to start, in which
+case prefer <code>git skip</code>.</p>
+
+<h2 id="uninstall">Uninstall</h2>
+
+<p>If you used the install script:</p>
+
+<pre>curl -s https://get.powerbash.org | bash -s -- uninstall</pre>
+
+<p>It removes the script, the symlink or the block it added to your startup file, and
+nothing else.</p>
+
+<p>If you used Homebrew, <code>brew uninstall powerbash</code>, then delete the
+<code>source</code> line you added.</p>
+
+<p>If you installed by hand, remove whichever file you created:</p>
+
+<pre>rm ~/.local/share/powerbash/powerbash.sh   <span class="hint"># and the source line in ~/.bashrc</span>
+rm ~/.bashrc.d/powerbash.sh
+sudo rm /etc/profile.d/z_powerbash.sh</pre>
+
+<p>Your saved settings persist independently of all of this. Remove them too if you
+want a clean slate:</p>
+
+<pre>rm ~/.config/powerbashrc</pre>
+
+</main>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>powerbash — MIT licensed.</p>
+    <nav aria-label="Footer">
+      <a href="/">Home</a>
+      <a href="https://github.com/napalm255/powerbash">Source</a>
+      <a href="https://github.com/napalm255/powerbash/issues">Issues</a>
+      <a href="https://download.powerbash.org/powerbash.sh">Download</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>

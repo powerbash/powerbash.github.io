@@ -1,3 +1,293 @@
----
-layout: front
----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="powerbash is a powerline-style bash prompt in pure bash. One script, no dependencies, no patched fonts. Runs on Linux, macOS, and WSL.">
+<meta name="color-scheme" content="light dark">
+<title>powerbash — a powerline-style bash prompt in pure bash</title>
+<link rel="icon" href="favicon.ico">
+<link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="masthead">
+  <div class="wrap">
+    <a class="brand" href="/">powerbash</a>
+    <nav aria-label="Main">
+      <a href="#install">Install</a>
+      <a href="#build">Build a prompt</a>
+      <a href="#segments">Segments</a>
+      <a href="/docs/">Docs</a>
+      <a href="https://github.com/napalm255/powerbash">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow">one file, sourced into your shell</p>
+    <h1>Your shell already knows all this.</h1>
+    <p class="lede">powerbash puts the branch you are on, whether it is dirty, how far
+      ahead of the remote you are, and what the last command returned right where you
+      are already looking. Pure bash — no dependencies, no patched fonts.</p>
+
+    <div class="terminal hero-terminal">
+      <p class="prompt">
+        <span class="seg seg-user">napalm</span><span class="seg seg-path">webapp</span><span class="seg seg-git">»feature/prompt-redesign + ⇡1</span><span class="seg seg-symbol">$</span><span class="caret">git push</span>
+      </p>
+    </div>
+
+    <div class="hero-actions">
+      <a class="button" href="#install">Install it</a>
+      <a class="button button-quiet" href="/docs/">Read the docs</a>
+    </div>
+  </div>
+</section>
+
+<section id="install" class="sunken">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">install</p>
+      <h2>Into your own account.</h2>
+      <p class="lede">powerbash needs no privileges and touches nothing outside your
+        home directory. Pick whichever of these you already use.</p>
+    </div>
+
+    <div class="methods">
+      <article class="method">
+        <div class="method-text">
+          <h3>Homebrew</h3>
+          <p>macOS or Linux. Upgrades along with everything else you have installed.</p>
+        </div>
+<pre>brew install powerbash/powerbash/powerbash</pre>
+      </article>
+
+      <article class="method">
+        <div class="method-text">
+          <h3>Install script</h3>
+          <p>Downloads the script and wires it into your shell startup file. Run it
+            again any time to upgrade, or pass <code>uninstall</code> to remove it.</p>
+        </div>
+<pre>curl -s https://get.powerbash.org | bash</pre>
+      </article>
+
+      <article class="method">
+        <div class="method-text">
+          <h3>By hand</h3>
+          <p>One file and one line. Use <code>~/.bash_profile</code> on macOS, where
+            terminals start login shells.</p>
+        </div>
+<pre>curl -Ls https://download.powerbash.org/powerbash.sh -o ~/powerbash.sh
+echo 'source ~/powerbash.sh' &gt;&gt; ~/.bashrc</pre>
+      </article>
+    </div>
+
+    <p class="note">Start a new shell afterwards, or run <code>exec bash</code>.
+      Installing for every account on a machine is possible but discouraged — see
+      <a href="/docs/#global">multi-user installs</a> for what it costs you.</p>
+  </div>
+</section>
+
+<section id="build">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">every segment is a toggle</p>
+      <h2>Build a prompt.</h2>
+      <p class="lede">Turn segments on and off. The prompt updates, and so does the
+        list of commands that would get you there — the same ones you would type into
+        a shell, all of them tab-completable.</p>
+    </div>
+
+    <!-- There is no script on this page. These controls are checkboxes and
+         radios, and the rules in main.css key off :checked. They have to be
+         direct siblings of .config: the ~ combinator cannot reach out of a
+         wrapper, so they are hidden individually rather than as a group. -->
+    <input class="config-input" type="checkbox" id="c-venv">
+    <input class="config-input" type="checkbox" id="c-user" checked>
+    <input class="config-input" type="checkbox" id="c-host">
+    <input class="config-input" type="radio" name="pathmode" id="p-off">
+    <input class="config-input" type="radio" name="pathmode" id="p-full">
+    <input class="config-input" type="radio" name="pathmode" id="p-working" checked>
+    <input class="config-input" type="radio" name="pathmode" id="p-parted">
+    <input class="config-input" type="radio" name="pathmode" id="p-short">
+    <input class="config-input" type="radio" name="pathmode" id="p-mini">
+    <input class="config-input" type="checkbox" id="c-git" checked>
+    <input class="config-input" type="checkbox" id="c-jobs">
+    <input class="config-input" type="checkbox" id="c-rc" checked>
+
+    <div class="config">
+      <div class="config-preview">
+        <div class="terminal">
+          <p class="prompt">
+            <span class="seg seg-venv">▶ .venv</span><span
+              class="seg seg-user">napalm</span><span
+              class="seg seg-host">@build-01</span><span
+              class="seg seg-path path-full">/home/napalm/src/webapp/src/components/widgets</span><span
+              class="seg seg-path path-working">widgets</span><span
+              class="seg seg-path path-parted">/home/.../components/widgets</span><span
+              class="seg seg-path path-short">..c/components/widgets</span><span
+              class="seg seg-path path-mini">/h/n/s/w/s/c/widgets</span><span
+              class="seg seg-git">»feature/prompt-redesign + ⇡1</span><span
+              class="seg seg-jobs">2</span><span
+              class="seg seg-symbol">$</span><span
+              class="seg seg-rc">127</span>
+          </p>
+        </div>
+<pre class="commands"><span class="hint"># type these to keep what you picked</span><span class="cmd cmd-venv-off">powerbash py virtualenv off</span><span class="cmd cmd-user-off">powerbash user off</span><span class="cmd cmd-host-off">powerbash host off</span><span class="cmd cmd-p-off">powerbash path off</span><span class="cmd cmd-p-full">powerbash path full</span><span class="cmd cmd-p-parted">powerbash path parted</span><span class="cmd cmd-p-short">powerbash path short</span><span class="cmd cmd-p-mini">powerbash path mini</span><span class="cmd cmd-git-off">powerbash git off</span><span class="cmd cmd-jobs-off">powerbash jobs off</span><span class="cmd cmd-rc-off">powerbash rc off</span><span class="cmd cmd-save">powerbash config save</span></pre>
+      </div>
+
+      <div class="controls">
+        <h3>Segments</h3>
+        <p>Starting from the defaults powerbash ships with.</p>
+
+        <div class="control-group">
+          <span class="group-label">Show</span>
+          <div class="control-list">
+            <label class="lbl-venv" for="c-venv">virtualenv</label>
+            <label class="lbl-user" for="c-user">user</label>
+            <label class="lbl-host" for="c-host">host</label>
+            <label class="lbl-git" for="c-git">git</label>
+            <label class="lbl-jobs" for="c-jobs">jobs</label>
+            <label class="lbl-rc" for="c-rc">return code</label>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <span class="group-label">Path</span>
+          <div class="control-list">
+            <label class="lbl-p-off" for="p-off">off</label>
+            <label class="lbl-p-full" for="p-full">full</label>
+            <label class="lbl-p-working" for="p-working">working</label>
+            <label class="lbl-p-parted" for="p-parted">parted</label>
+            <label class="lbl-p-short" for="p-short">short</label>
+            <label class="lbl-p-mini" for="p-mini">mini</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="segments" class="sunken">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">what the colors mean</p>
+      <h2>Reading a prompt.</h2>
+    </div>
+
+    <div class="scroller">
+      <table class="segment-table">
+        <thead>
+          <tr>
+            <th scope="col">Segment</th>
+            <th scope="col">Looks like</th>
+            <th scope="col">Tells you</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>virtualenv</td>
+            <td><span class="chip seg-venv">▶ .venv</span></td>
+            <td>A Python or Conda environment is active. <code>short</code> trims the
+              name to five characters; <code>icon</code> drops the name entirely.</td>
+          </tr>
+          <tr>
+            <td>user</td>
+            <td><span class="chip seg-user">napalm</span></td>
+            <td>Who you are. Turns yellow under <code>sudo</code> and over SSH.</td>
+          </tr>
+          <tr>
+            <td>host</td>
+            <td><span class="chip seg-host">@build-01</span></td>
+            <td>Which machine. Hidden until you are over SSH, so it takes up room
+              only when that is a thing you might forget.</td>
+          </tr>
+          <tr>
+            <td>path</td>
+            <td><span class="chip seg-path">widgets</span></td>
+            <td>Where you are, in one of five widths. Always <code>~</code> at home.</td>
+          </tr>
+          <tr>
+            <td>git</td>
+            <td><span class="chip seg-git">»main + ⇡2 ⇣1</span></td>
+            <td>Branch — or a tag or short SHA when the head is detached.
+              <code>+</code> means uncommitted changes; <code>⇡</code> and
+              <code>⇣</code> count commits ahead of and behind the remote.</td>
+          </tr>
+          <tr>
+            <td>jobs</td>
+            <td><span class="chip seg-jobs">2</span></td>
+            <td>Background jobs in this shell. Appears only when there are some.</td>
+          </tr>
+          <tr>
+            <td>symbol</td>
+            <td><span class="chip seg-symbol">$</span></td>
+            <td>Where your command goes. <code>#</code> and red when you are root.</td>
+          </tr>
+          <tr>
+            <td>return code</td>
+            <td><span class="chip seg-rc">127</span></td>
+            <td>What the last command exited with. Appears only when it was not zero.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="why">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">why it stays out of the way</p>
+      <h2>One file. Nothing else.</h2>
+    </div>
+
+    <div class="facts">
+      <div class="fact">
+        <h3>No dependencies</h3>
+        <p>No Python, no Go, no daemon, no font patching. Bash, plus <code>tput</code>
+          and <code>git</code> if you have them. Without those it still renders, just
+          plainer.</p>
+      </div>
+      <div class="fact">
+        <h3>bash 3.2 and up</h3>
+        <p>Including the <code>/bin/bash</code> macOS still ships. Every change is
+          tested against that, against current bash, and on Linux and macOS.</p>
+      </div>
+      <div class="fact">
+        <h3>No fork per prompt</h3>
+        <p>Segments write straight into <code>PS1</code> rather than running
+          subshells, and git state comes from one call. On slow filesystems you can
+          time it out or skip whole paths.</p>
+      </div>
+      <div class="fact">
+        <h3>Nothing gets executed</h3>
+        <p>A branch or directory named <code>$(rm -rf ~)</code> is escaped before it
+          reaches <code>PS1</code>. Saved settings are read back through an
+          allowlist, never sourced.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>powerbash — MIT licensed.</p>
+    <nav aria-label="Footer">
+      <a href="/docs/">Docs</a>
+      <a href="https://github.com/napalm255/powerbash">Source</a>
+      <a href="https://github.com/napalm255/powerbash/issues">Issues</a>
+      <a href="https://download.powerbash.org/powerbash.sh">Download</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>

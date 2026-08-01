@@ -1,0 +1,931 @@
+/* powerbash.org
+ *
+ * Hand-written CSS. No build step, no framework, no external requests --
+ * the page must render from a bare checkout opened over file://.
+ *
+ * The palette is not invented: every segment color below is the color
+ * powerbash actually emits, read off a real prompt render.
+ *
+ *   user      setaf 15 / setab 8   bright white on bright black
+ *   host(ssh) setaf 3  / setab 8   yellow on bright black
+ *   path      setaf 7  / setab 8   white on bright black
+ *   git       setaf 15 / setab 4   bright white on blue
+ *   jobs      setaf 15 / setab 5   bright white on magenta
+ *   virtualenv                     same magenta
+ *   symbol    setaf 15 / setab 2   bright white on green
+ *   return    setaf 15 / setab 9   bright white on bright red
+ *
+ * Those eight colors are the whole brand. Terminals render ANSI slightly
+ * differently, so the hexes below are a well-behaved modern terminal's
+ * interpretation rather than the raw VGA values.
+ */
+
+:root {
+  /* prompt segments */
+  --seg-fg: #ffffff;
+  --seg-fg-dim: #d4d4d4;
+  --seg-fg-ssh: #e5c07b;
+  --seg-neutral: #4b5058;
+  --seg-git: #1f5fbf;
+  --seg-symbol: #2f8f46;
+  --seg-magenta: #9a4bad;
+  --seg-rc: #cc3333;
+
+  /* page */
+  --bg: #fbfaf8;
+  --bg-sunken: #f2efe9;
+  --surface: #ffffff;
+  --rule: #ddd8cf;
+  --ink: #14161a;
+  --ink-muted: #5c6068;
+  --link: #14509e;
+  --focus: #14509e;
+
+  --terminal-bg: #1b1d21;
+  --terminal-fg: #d7d9dd;
+  --terminal-dim: #8b9099;
+
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "DejaVu Sans Mono", "Liberation Mono", monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Noto Sans", sans-serif;
+
+  --measure: 68ch;
+  --wide: 1120px;
+  --gutter: clamp(1.25rem, 5vw, 3rem);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #131519;
+    --bg-sunken: #0e1013;
+    --surface: #191c21;
+    --rule: #2b2f36;
+    --ink: #e8eaed;
+    --ink-muted: #9aa0a8;
+    --link: #7fb0ff;
+    --focus: #7fb0ff;
+
+    --terminal-bg: #0b0d10;
+    --terminal-fg: #d7d9dd;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: clamp(1rem, 0.97rem + 0.15vw, 1.0625rem);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------------------------------------------------------------- type -- */
+
+h1,
+h2,
+h3 {
+  font-family: var(--mono);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin: 0;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: clamp(2.25rem, 1.4rem + 3.6vw, 4rem);
+}
+
+h2 {
+  font-size: clamp(1.5rem, 1.2rem + 1.3vw, 2.125rem);
+}
+
+h3 {
+  font-size: 1.0625rem;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0 0 1rem;
+  max-width: var(--measure);
+}
+
+a {
+  color: var(--link);
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+code,
+kbd,
+pre {
+  font-family: var(--mono);
+}
+
+/* The eyebrow is set as a shell comment, because on this site that is what
+   a small label above a heading actually is. */
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  color: var(--ink-muted);
+  letter-spacing: 0;
+  margin: 0 0 0.75rem;
+}
+
+.eyebrow::before {
+  content: "# ";
+}
+
+.lede {
+  font-size: clamp(1.0625rem, 1rem + 0.4vw, 1.25rem);
+  color: var(--ink-muted);
+}
+
+/* ------------------------------------------------------------ scaffold -- */
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 0.75rem 1rem;
+  z-index: 10;
+}
+
+.skip:focus {
+  left: 0;
+}
+
+.wrap {
+  max-width: var(--wide);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+section {
+  padding-block: clamp(3rem, 8vw, 5.5rem);
+  border-top: 1px solid var(--rule);
+}
+
+section:first-of-type {
+  border-top: 0;
+}
+
+.sunken {
+  background: var(--bg-sunken);
+}
+
+.section-head {
+  margin-bottom: 2.5rem;
+}
+
+/* -------------------------------------------------------------- header -- */
+
+.masthead {
+  border-bottom: 1px solid var(--rule);
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.masthead .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.5rem;
+  min-height: 3.5rem;
+  padding-block: 0.5rem;
+}
+
+.brand {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 1.0625rem;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  text-decoration: none;
+  margin-right: auto;
+}
+
+.brand::before {
+  content: "$";
+  color: var(--seg-symbol);
+  margin-right: 0.4em;
+}
+
+.masthead nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  font-family: var(--mono);
+  font-size: 0.9375rem;
+}
+
+.masthead nav a {
+  color: var(--ink-muted);
+  text-decoration: none;
+}
+
+.masthead nav a:hover,
+.masthead nav a[aria-current="page"] {
+  color: var(--ink);
+  text-decoration: underline;
+}
+
+/* ------------------------------------------------------------- prompt -- */
+
+/* The prompt is one flex row of segments that butt directly against each
+   other. No gaps, no radius, no separators: that is exactly how powerbash
+   draws it, and getting it wrong here would misrepresent the product. */
+
+.prompt {
+  margin: 0;
+  max-width: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  font-family: var(--mono);
+  font-size: inherit;
+  line-height: 1.9;
+  white-space: pre;
+}
+
+.seg {
+  padding-inline: 0.6em;
+  color: var(--seg-fg);
+  background: var(--seg-neutral);
+}
+
+.seg-path {
+  color: var(--seg-fg-dim);
+}
+
+.seg-host {
+  color: var(--seg-fg-ssh);
+}
+
+.seg-git {
+  background: var(--seg-git);
+}
+
+.seg-venv,
+.seg-jobs {
+  background: var(--seg-magenta);
+}
+
+.seg-symbol {
+  background: var(--seg-symbol);
+}
+
+.seg-rc {
+  background: var(--seg-rc);
+}
+
+.caret {
+  padding-inline: 0.6em 0;
+  color: var(--terminal-dim);
+}
+
+/* the terminal frame */
+
+.terminal {
+  background: var(--terminal-bg);
+  color: var(--terminal-fg);
+  padding: clamp(1rem, 3vw, 1.75rem);
+  overflow-x: auto;
+  border: 1px solid var(--rule);
+}
+
+.terminal .prompt {
+  flex-wrap: nowrap;
+  width: max-content;
+  min-width: 100%;
+}
+
+.terminal-line {
+  font-family: var(--mono);
+  color: var(--terminal-dim);
+  white-space: pre;
+  line-height: 1.9;
+}
+
+.terminal-line .typed {
+  color: var(--terminal-fg);
+}
+
+/* ---------------------------------------------------------------- hero -- */
+
+.hero {
+  padding-block: clamp(3rem, 9vw, 6rem) clamp(2.5rem, 7vw, 4.5rem);
+}
+
+.hero h1 {
+  margin-bottom: 1.25rem;
+}
+
+.hero .lede {
+  margin-bottom: 2.5rem;
+}
+
+.hero-terminal {
+  font-size: clamp(0.875rem, 0.72rem + 0.7vw, 1.375rem);
+  margin-bottom: 2rem;
+}
+
+/* On a narrow screen the hero prompt wraps rather than scrolling out of
+   sight. Real terminals wrap a long prompt too, and the first thing anyone
+   sees should not be cut off mid-branch. */
+@media (max-width: 34rem) {
+  .hero-terminal .prompt {
+    flex-wrap: wrap;
+    width: auto;
+  }
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  align-items: center;
+}
+
+.button {
+  font-family: var(--mono);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 0.7em 1.2em;
+  background: var(--seg-git);
+  color: #ffffff;
+  border: 1px solid transparent;
+}
+
+.button:hover {
+  background: #17509f;
+}
+
+.button-quiet {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--rule);
+}
+
+.button-quiet:hover {
+  background: var(--surface);
+  border-color: var(--ink-muted);
+}
+
+/* -------------------------------------------------------- configurator -- */
+
+/* Toggling segments is done with checkboxes and sibling selectors -- there
+   is no script on this page. Each control is named after the command it
+   stands for, so the panel doubles as a reference for the CLI. */
+
+.config-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.config {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 60rem) {
+  .config {
+    grid-template-columns: minmax(0, 1fr) 19rem;
+    align-items: start;
+  }
+}
+
+.config-preview {
+  min-width: 0;
+}
+
+.config-preview .terminal + .terminal {
+  border-top: 0;
+}
+
+.controls {
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  padding: 1.25rem;
+}
+
+.controls h3 {
+  margin-bottom: 0.25rem;
+}
+
+.controls p {
+  font-size: 0.875rem;
+  color: var(--ink-muted);
+  margin-bottom: 1.25rem;
+}
+
+.control-group {
+  margin-bottom: 1.5rem;
+}
+
+.control-group:last-child {
+  margin-bottom: 0;
+}
+
+.control-group > .group-label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  margin-bottom: 0.6rem;
+}
+
+.control-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.control-list label {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  padding: 0.4em 0.7em;
+  border: 1px solid var(--rule);
+  color: var(--ink-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.control-list label:hover {
+  border-color: var(--ink-muted);
+  color: var(--ink);
+}
+
+/* checked states, one per control */
+#c-venv:checked ~ .config .lbl-venv,
+#c-host:checked ~ .config .lbl-host,
+#c-user:checked ~ .config .lbl-user,
+#c-git:checked ~ .config .lbl-git,
+#c-jobs:checked ~ .config .lbl-jobs,
+#c-rc:checked ~ .config .lbl-rc,
+#p-off:checked ~ .config .lbl-p-off,
+#p-full:checked ~ .config .lbl-p-full,
+#p-working:checked ~ .config .lbl-p-working,
+#p-parted:checked ~ .config .lbl-p-parted,
+#p-short:checked ~ .config .lbl-p-short,
+#p-mini:checked ~ .config .lbl-p-mini {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--bg);
+}
+
+/* The input itself is off-screen, so its focus ring has to be drawn on the
+   label that stands in for it. */
+#c-venv:focus-visible ~ .config .lbl-venv,
+#c-host:focus-visible ~ .config .lbl-host,
+#c-user:focus-visible ~ .config .lbl-user,
+#c-git:focus-visible ~ .config .lbl-git,
+#c-jobs:focus-visible ~ .config .lbl-jobs,
+#c-rc:focus-visible ~ .config .lbl-rc,
+#p-off:focus-visible ~ .config .lbl-p-off,
+#p-full:focus-visible ~ .config .lbl-p-full,
+#p-working:focus-visible ~ .config .lbl-p-working,
+#p-parted:focus-visible ~ .config .lbl-p-parted,
+#p-short:focus-visible ~ .config .lbl-p-short,
+#p-mini:focus-visible ~ .config .lbl-p-mini {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* segments hidden unless their control is on */
+#c-venv:not(:checked) ~ .config .seg-venv,
+#c-host:not(:checked) ~ .config .seg-host,
+#c-user:not(:checked) ~ .config .seg-user,
+#c-git:not(:checked) ~ .config .seg-git,
+#c-jobs:not(:checked) ~ .config .seg-jobs,
+#c-rc:not(:checked) ~ .config .seg-rc {
+  display: none;
+}
+
+/* exactly one path mode shows at a time */
+.config .seg-path {
+  display: none;
+}
+
+#p-full:checked ~ .config .path-full,
+#p-working:checked ~ .config .path-working,
+#p-parted:checked ~ .config .path-parted,
+#p-short:checked ~ .config .path-short,
+#p-mini:checked ~ .config .path-mini {
+  display: block;
+}
+
+/* the command echo: the line you would type to get what you are looking at */
+.config .cmd {
+  display: none;
+}
+
+#c-venv:not(:checked) ~ .config .cmd-venv-off,
+#c-host:not(:checked) ~ .config .cmd-host-off,
+#c-user:not(:checked) ~ .config .cmd-user-off,
+#c-git:not(:checked) ~ .config .cmd-git-off,
+#c-jobs:not(:checked) ~ .config .cmd-jobs-off,
+#c-rc:not(:checked) ~ .config .cmd-rc-off,
+#p-off:checked ~ .config .cmd-p-off,
+#p-full:checked ~ .config .cmd-p-full,
+#p-parted:checked ~ .config .cmd-p-parted,
+#p-short:checked ~ .config .cmd-p-short,
+#p-mini:checked ~ .config .cmd-p-mini,
+.config .cmd-save {
+  display: block;
+}
+
+.commands {
+  margin: 0;
+  padding: clamp(1rem, 3vw, 1.75rem);
+  background: var(--terminal-bg);
+  color: var(--terminal-fg);
+  border: 1px solid var(--rule);
+  border-top: 0;
+  font-size: 0.875rem;
+  line-height: 1.9;
+  overflow-x: auto;
+}
+
+.commands .hint {
+  display: block;
+  color: var(--terminal-dim);
+}
+
+.commands .cmd::before {
+  content: "$ ";
+  color: var(--seg-symbol);
+}
+
+/* config save is separated from the toggles above it: it is the one command
+   that is not optional if you want any of this to survive a new shell. */
+.commands .cmd-save {
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid #2b2f36;
+}
+
+/* ------------------------------------------------------------- install -- */
+
+/* One row per method rather than three columns: a shell command needs the
+   width, and a command truncated inside a narrow card is useless. */
+.methods {
+  border-top: 1px solid var(--rule);
+}
+
+.method {
+  min-width: 0;
+  border-bottom: 1px solid var(--rule);
+  padding-block: 1.5rem;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+@media (min-width: 48rem) {
+  .method {
+    grid-template-columns: 20rem minmax(0, 1fr);
+    gap: 2.5rem;
+  }
+}
+
+.method h3 {
+  margin-bottom: 0.4rem;
+}
+
+.method p {
+  font-size: 0.9375rem;
+  color: var(--ink-muted);
+  margin: 0;
+}
+
+.method pre {
+  margin: 0;
+  background: var(--terminal-bg);
+  color: var(--terminal-fg);
+  padding: 0.9rem 1.1rem;
+  font-size: 0.8125rem;
+  line-height: 1.8;
+  overflow-x: auto;
+}
+
+.method pre .hint {
+  color: var(--terminal-dim);
+}
+
+.note {
+  margin-top: 2rem;
+  font-size: 0.9375rem;
+  color: var(--ink-muted);
+  max-width: var(--measure);
+}
+
+/* ------------------------------------------------------------ segments -- */
+
+.segment-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.segment-table th {
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  font-weight: 400;
+  padding: 0 1rem 0.6rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.segment-table td {
+  padding: 0.7rem 1rem 0.7rem 0;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+
+.segment-table td:last-child,
+.segment-table th:last-child {
+  padding-right: 0;
+}
+
+.chip {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.875rem;
+  white-space: pre;
+  padding-inline: 0.6em;
+  color: var(--seg-fg);
+  background: var(--seg-neutral);
+}
+
+.scroller {
+  overflow-x: auto;
+}
+
+/* ------------------------------------------------------------ features -- */
+
+.facts {
+  display: grid;
+  gap: 2rem 3rem;
+  grid-template-columns: 1fr;
+  max-width: none;
+}
+
+@media (min-width: 48rem) {
+  .facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 72rem) {
+  .facts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.fact h3 {
+  margin-bottom: 0.4rem;
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--seg-git);
+}
+
+.fact p {
+  font-size: 0.9375rem;
+  color: var(--ink-muted);
+  margin: 0;
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--rule);
+  padding-bottom: 0.1rem;
+}
+
+/* -------------------------------------------------------------- footer -- */
+
+footer {
+  border-top: 1px solid var(--rule);
+  padding-block: 2.5rem 3.5rem;
+  font-size: 0.9375rem;
+  color: var(--ink-muted);
+}
+
+footer .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+  justify-content: space-between;
+}
+
+footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  font-family: var(--mono);
+}
+
+/* ---------------------------------------------------------------- docs -- */
+
+.docs-layout {
+  display: grid;
+  gap: 3rem;
+  grid-template-columns: 1fr;
+  padding-block: clamp(2rem, 6vw, 3.5rem);
+}
+
+@media (min-width: 60rem) {
+  .docs-layout {
+    grid-template-columns: 16rem minmax(0, 1fr);
+    gap: 4rem;
+  }
+}
+
+.toc {
+  font-family: var(--mono);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+@media (min-width: 60rem) {
+  .toc {
+    position: sticky;
+    top: 4.5rem;
+    max-height: calc(100vh - 6rem);
+    overflow-y: auto;
+  }
+}
+
+.toc h2 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  font-weight: 400;
+  margin-bottom: 0.75rem;
+}
+
+.toc ul {
+  list-style: none;
+  margin: 0 0 1.5rem;
+  padding: 0;
+}
+
+.toc li {
+  margin-bottom: 0.4rem;
+}
+
+.toc a {
+  color: var(--ink-muted);
+  text-decoration: none;
+}
+
+.toc a:hover {
+  color: var(--ink);
+  text-decoration: underline;
+}
+
+.docs h1 {
+  font-size: clamp(2rem, 1.5rem + 2vw, 2.75rem);
+  margin-bottom: 1rem;
+}
+
+.docs h2 {
+  margin-top: 3.5rem;
+  margin-bottom: 1rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+  scroll-margin-top: 5rem;
+}
+
+.docs h3 {
+  font-size: 1.125rem;
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+  scroll-margin-top: 5rem;
+}
+
+.docs ul,
+.docs ol {
+  max-width: var(--measure);
+  padding-left: 1.25rem;
+}
+
+.docs li {
+  margin-bottom: 0.4rem;
+}
+
+.docs pre {
+  background: var(--terminal-bg);
+  color: var(--terminal-fg);
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.8;
+  margin: 0 0 1.25rem;
+  border: 1px solid var(--rule);
+}
+
+.docs pre .hint {
+  color: var(--terminal-dim);
+}
+
+.docs :not(pre) > code {
+  background: var(--bg-sunken);
+  padding: 0.1em 0.35em;
+  font-size: 0.9em;
+}
+
+.docs table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  margin-bottom: 1.25rem;
+}
+
+.docs th {
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  font-weight: 400;
+  padding: 0 1rem 0.6rem 0;
+  border-bottom: 1px solid var(--rule);
+  white-space: nowrap;
+}
+
+.docs td {
+  padding: 0.6rem 1rem 0.6rem 0;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+
+.docs td:last-child,
+.docs th:last-child {
+  padding-right: 0;
+}
+
+.callout {
+  border-left: 3px solid var(--seg-rc);
+  background: var(--bg-sunken);
+  padding: 1rem 1.25rem;
+  margin: 0 0 1.25rem;
+  max-width: var(--measure);
+}
+
+.callout p:last-child {
+  margin-bottom: 0;
+}
+
+.callout strong {
+  font-family: var(--mono);
+  font-size: 0.9em;
+}
