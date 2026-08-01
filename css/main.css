@@ -368,13 +368,33 @@ section:first-of-type {
   margin-bottom: 2rem;
 }
 
-/* On a narrow screen the hero prompt wraps rather than scrolling out of
-   sight. Real terminals wrap a long prompt too, and the first thing anyone
-   sees should not be cut off mid-branch. */
-@media (max-width: 34rem) {
-  .hero-terminal .prompt {
+/* On a narrow screen a prompt wraps rather than scrolling out of sight.
+   Real terminals wrap a long prompt too, and a demo you have to drag
+   sideways to read is not much of a demo. */
+@media (max-width: 47.99rem) {
+  .terminal .prompt {
     flex-wrap: wrap;
     width: auto;
+    min-width: 0;
+  }
+}
+
+/* A segment is one unbreakable colored block -- splitting "»branch + ⇡1"
+   across two of them would misrepresent the prompt -- so on the narrowest
+   phones the type shrinks instead, until the widest segment fits. */
+@media (max-width: 24rem) {
+  .terminal,
+  .hero-terminal {
+    font-size: 0.875rem;
+  }
+}
+
+/* 320px: the git segment alone is still a few pixels over. One more step
+   down and the whole prompt fits without a scrollbar. */
+@media (max-width: 21rem) {
+  .terminal,
+  .hero-terminal {
+    font-size: 0.8125rem;
   }
 }
 
@@ -502,6 +522,24 @@ section:first-of-type {
   color: var(--ink);
 }
 
+@media (max-width: 47.99rem) {
+  .control-list label {
+    padding: 0.6em 0.9em;
+    font-size: 0.875rem;
+  }
+
+  .masthead nav {
+    gap: 0.75rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .toc a,
+  footer nav a {
+    display: inline-block;
+    padding-block: 0.2rem;
+  }
+}
+
 /* checked states, one per control */
 #c-venv:checked ~ .config .lbl-venv,
 #c-host:checked ~ .config .lbl-host,
@@ -590,7 +628,8 @@ section:first-of-type {
   border-top: 0;
   font-size: 0.875rem;
   line-height: 1.9;
-  overflow-x: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .commands .hint {
@@ -665,7 +704,14 @@ section:first-of-type {
   padding: 0.9rem 1.1rem;
   font-size: 0.8125rem;
   line-height: 1.8;
-  overflow-x: auto;
+  /* These are commands to copy. They wrap at whatever width they stop
+     fitting -- a command whose tail is off-screen is worse than a ragged
+     one -- with a hanging indent so a continuation reads as a continuation.
+     At full width nothing wraps and this is a no-op. */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  padding-left: 2.2rem;
+  text-indent: -1.1rem;
 }
 
 .method pre .hint {
@@ -722,6 +768,46 @@ section:first-of-type {
 
 .scroller {
   overflow-x: auto;
+}
+
+/* Same treatment as the docs tables: three columns do not fit a phone, and
+   a scroller would just hide two of them. */
+@media (max-width: 47.99rem) {
+  .segment-table,
+  .segment-table tbody,
+  .segment-table tr,
+  .segment-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .segment-table thead {
+    display: none;
+  }
+
+  .segment-table tr {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .segment-table td {
+    padding: 0;
+    border: 0;
+  }
+
+  .segment-table td + td {
+    margin-top: 0.5rem;
+  }
+
+  .segment-table td[data-label="Segment"] {
+    font-family: var(--mono);
+    font-weight: 700;
+  }
+
+  /* No column labels here: stacked as name, example, description, each row
+     explains itself, and three labels per row would be more chrome than
+     content. The docs tables do need them -- "on, off" means nothing without
+     "VALUES" above it. */
 }
 
 /* ------------------------------------------------------------ features -- */
@@ -787,9 +873,17 @@ footer nav {
 
 .docs-layout {
   display: grid;
-  gap: 3rem;
+  gap: 2.5rem;
   grid-template-columns: 1fr;
   padding-block: clamp(2rem, 6vw, 3.5rem);
+}
+
+/* Grid items default to min-width:auto, which means a wide <pre> sets the
+   column's minimum and pushes the whole page sideways -- the `overflow-x`
+   on the <pre> never gets a chance to engage. This one line is what keeps
+   the document from scrolling horizontally on a phone. */
+.docs-layout > * {
+  min-width: 0;
 }
 
 @media (min-width: 60rem) {
@@ -811,6 +905,38 @@ footer nav {
     top: 4.5rem;
     max-height: calc(100vh - 6rem);
     overflow-y: auto;
+  }
+}
+
+/* Below the sidebar breakpoint the contents sit above the document, so they
+   have to be quick to skim past: two columns and tighter rows turn ~15 links
+   from a screenful into a block. */
+@media (max-width: 59.99rem) {
+  .toc {
+    border: 1px solid var(--rule);
+    padding: 1.25rem;
+    background: var(--bg-sunken);
+  }
+
+  .toc ul {
+    columns: 2;
+    column-gap: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  /* Two columns of "Multi-user installs" do not fit a 320px phone. */
+  @media (max-width: 24rem) {
+    .toc ul {
+      columns: 1;
+    }
+  }
+
+  .toc li {
+    break-inside: avoid;
+  }
+
+  .toc ul:last-child {
+    margin-bottom: 0;
   }
 }
 
@@ -877,21 +1003,62 @@ footer nav {
   background: var(--terminal-bg);
   color: var(--terminal-fg);
   padding: 1rem 1.25rem;
-  overflow-x: auto;
   font-size: 0.875rem;
   line-height: 1.8;
   margin: 0 0 1.25rem;
   border: 1px solid var(--rule);
+  /* Wrap rather than scroll: the tail of an install command is the part
+     that matters, and pre-wrap still preserves the runs of spaces that
+     align the annotated blocks. */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* A hanging indent marks a wrapped continuation as a continuation rather
+   than the next command. It is scoped to the blocks without # annotations,
+   because those are the ones with lines long enough to wrap -- and because
+   text-indent applies per block box, so in an annotated block (where each
+   comment is its own block on narrow screens) it would leave commands
+   sitting at two different left edges. */
+.docs pre:not(:has(.hint)) {
+  padding-left: 2.65rem;
+  text-indent: -1.4rem;
 }
 
 .docs pre .hint {
   color: var(--terminal-dim);
 }
 
+/* On a phone these are commands to copy, not code to admire: wrapping keeps
+   the whole line on screen, where scrolling would hide the end of it -- and
+   the end is usually the part that matters (a path, a flag). Desktop lines
+   all fit, so they stay unwrapped there. */
+@media (max-width: 47.99rem) {
+  .docs pre {
+    font-size: 0.8125rem;
+    padding: 0.9rem 1rem;
+  }
+
+  .docs pre:not(:has(.hint)) {
+    padding-left: 2.4rem;
+  }
+
+  /* The reference blocks align their # comments into a column, which cannot
+     survive a phone: the comment wraps and strands a bare "#" at the end of
+     the command. Give each comment its own line instead -- the alignment was
+     only ever there to make the column scannable, and at this width there is
+     no column. */
+  .docs pre .hint {
+    display: block;
+  }
+}
+
 .docs :not(pre) > code {
   background: var(--bg-sunken);
   padding: 0.1em 0.35em;
   font-size: 0.9em;
+  /* POWERBASH_PATH_SHORT_LENGTH is wider than a phone's text column. */
+  overflow-wrap: anywhere;
 }
 
 .docs table {
@@ -923,6 +1090,48 @@ footer nav {
 .docs td:last-child,
 .docs th:last-child {
   padding-right: 0;
+}
+
+/* A three-column reference table cannot be read on a phone, and putting it
+   in a horizontal scroller only hides two of the three columns. Break each
+   row into a stacked block instead and carry the column name down with the
+   value, from the data-label on each cell. */
+@media (max-width: 47.99rem) {
+  .docs table,
+  .docs tbody,
+  .docs tr,
+  .docs td {
+    display: block;
+    width: 100%;
+  }
+
+  .docs thead {
+    display: none;
+  }
+
+  .docs tr {
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .docs td {
+    padding: 0;
+    border: 0;
+  }
+
+  .docs td + td {
+    margin-top: 0.35rem;
+  }
+
+  .docs td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+  }
 }
 
 .callout {

@@ -167,9 +167,9 @@ shell such as <code>dash</code>, so it is safe to leave there either way.</p>
     <tr><th scope="col">Installed with</th><th scope="col">Upgrade with</th></tr>
   </thead>
   <tbody>
-    <tr><td>Homebrew</td><td><code>brew upgrade powerbash</code></td></tr>
-    <tr><td>Install script</td><td><code>curl -s https://get.powerbash.org | bash</code></td></tr>
-    <tr><td>By hand</td><td>Re-run the same <code>curl</code> command</td></tr>
+    <tr><td data-label="Installed with">Homebrew</td><td data-label="Upgrade with"><code>brew upgrade powerbash</code></td></tr>
+    <tr><td data-label="Installed with">Install script</td><td data-label="Upgrade with"><code>curl -s https://get.powerbash.org | bash</code></td></tr>
+    <tr><td data-label="Installed with">By hand</td><td data-label="Upgrade with">Re-run the same <code>curl</code> command</td></tr>
   </tbody>
 </table>
 
@@ -185,7 +185,7 @@ powerbash prompt system   <span class="hint"># restore the prompt you had before
 
 <pre>powerbash path off        <span class="hint"># hide the path segment</span>
 powerbash path full       <span class="hint"># /full/path/to/no/where</span>
-powerbash path working    <span class="hint"># where                     (default)</span>
+powerbash path working    <span class="hint"># where (default)</span>
 powerbash path parted     <span class="hint"># /full/.../no/where</span>
 powerbash path short      <span class="hint"># ..ull/path/to/no/where</span>
 powerbash path mini       <span class="hint"># /f/p/t/n/where</span></pre>
@@ -262,17 +262,17 @@ sourcing <code>powerbash.sh</code>.</p>
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>POWERBASH_USER</code></td><td><code>on</code>, <code>off</code></td><td><code>on</code></td></tr>
-    <tr><td><code>POWERBASH_HOST</code></td><td><code>on</code>, <code>off</code>, <code>auto</code></td><td><code>auto</code></td></tr>
-    <tr><td><code>POWERBASH_PATH</code></td><td><code>off</code>, <code>full</code>, <code>working</code>, <code>parted</code>, <code>mini</code>, <code>short</code></td><td><code>working</code></td></tr>
-    <tr><td><code>POWERBASH_PATH_SHORT_LENGTH</code></td><td>positive integer</td><td><code>20</code></td></tr>
-    <tr><td><code>POWERBASH_GIT</code></td><td><code>on</code>, <code>off</code></td><td><code>on</code></td></tr>
-    <tr><td><code>POWERBASH_GIT_SKIP_PATHS</code></td><td>colon-separated path prefixes</td><td><code>/mnt/</code> on WSL, otherwise empty</td></tr>
-    <tr><td><code>POWERBASH_GIT_TIMEOUT</code></td><td>seconds, or empty/<code>0</code> to disable</td><td>empty</td></tr>
-    <tr><td><code>POWERBASH_JOBS</code></td><td><code>on</code>, <code>off</code></td><td><code>on</code></td></tr>
-    <tr><td><code>POWERBASH_SYMBOL</code></td><td><code>on</code>, <code>off</code></td><td><code>on</code></td></tr>
-    <tr><td><code>POWERBASH_RC</code></td><td><code>on</code>, <code>off</code></td><td><code>on</code></td></tr>
-    <tr><td><code>POWERBASH_PY_VIRTUALENV</code></td><td><code>on</code>, <code>off</code>, <code>icon</code>, <code>short</code></td><td><code>on</code></td></tr>
+    <tr><td data-label="Variable"><code>POWERBASH_USER</code></td><td data-label="Values"><code>on</code>, <code>off</code></td><td data-label="Default"><code>on</code></td></tr>
+    <tr><td data-label="Variable"><code>POWERBASH_HOST</code></td><td data-label="Values"><code>on</code>, <code>off</code>, <code>auto</code></td><td data-label="Default"><code>auto</code></td></tr>
+    <tr><td data-label="Variable"><code>POWERBASH_PATH</code></td><td data-label="Values"><code>off</code>, <code>full</code>, <code>working</code>, <code>parted</code>, <code>mini</code>, <code>short</code></td><td data-label="Default"><code>working</code></td></tr>
+    <tr><td data-label="Variable"><code>POWERBASH_PATH_SHORT_LENGTH</code></td><td data-label="Values">positive integer</td><td data-label="Default"><code>20</code></td></tr>
+    <tr><td data-label="Variable"><code>POWERBASH_GIT</code></td><td data-label="Values"><code>on</code>, <code>off</code></td><td data-label="Default"><code>on</code></td></tr>
+    <tr><td data-label="Variable"><code>POWERBASH_GIT_SKIP_PATHS</code></td><td data-label="Values">colon-separated path prefixes</td><td data-label="Default"><code>/mnt/</code> on WSL, otherwise empty</td></tr>
+    <tr><td data-label="Variable"><code>POWERBASH_GIT_TIMEOUT</code></td><td data-label="Values">seconds, or empty/<code>0</code> to disable</td><td data-label="Default">empty</td></tr>
+    <tr><td data-label="Variable"><code>POWERBASH_JOBS</code></td><td data-label="Values"><code>on</code>, <code>off</code></td><td data-label="Default"><code>on</code></td></tr>
+    <tr><td data-label="Variable"><code>POWERBASH_SYMBOL</code></td><td data-label="Values"><code>on</code>, <code>off</code></td><td data-label="Default"><code>on</code></td></tr>
+    <tr><td data-label="Variable"><code>POWERBASH_RC</code></td><td data-label="Values"><code>on</code>, <code>off</code></td><td data-label="Default"><code>on</code></td></tr>
+    <tr><td data-label="Variable"><code>POWERBASH_PY_VIRTUALENV</code></td><td data-label="Values"><code>on</code>, <code>off</code>, <code>icon</code>, <code>short</code></td><td data-label="Default"><code>on</code></td></tr>
   </tbody>
 </table>
 
