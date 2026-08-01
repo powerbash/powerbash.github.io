@@ -140,8 +140,20 @@ loop:</p>
 <pre>sudo curl -Ls https://download.powerbash.org/powerbash.sh -o /etc/profile.d/z_powerbash.sh
 sudo chmod 0644 /etc/profile.d/z_powerbash.sh</pre>
 
-<p>The <code>z_</code> prefix matters: powerbash is most consistent when it is the last
-profile.d script to run.</p>
+<p>The <code>z_</code> prefix is there to sort powerbash last. Scripts in
+<code>/etc/profile.d/</code> are sourced in filename order, and some of them register
+their prompt hook by <em>assigning</em> to <code>PROMPT_COMMAND</code> rather than
+appending to it — GNOME Terminal's <code>vte.sh</code> is the one people hit. An
+assignment throws away every hook registered before it, so a plain
+<code>powerbash.sh</code>, sorting ahead of <code>vte.sh</code>, would be dropped and
+your prompt would simply never appear.</p>
+
+<p>Since 2.0.0 this mostly takes care of itself. Bash 5.1 and newer allow
+<code>PROMPT_COMMAND</code> to be an array, and powerbash now creates one when nothing
+else has claimed the variable yet. Scripts like <code>vte.sh</code> check for that and
+append instead of assigning, so on bash 5.1+ the ordering no longer matters. Keep the
+prefix anyway: bash 5.0 and earlier — RHEL 8, Ubuntu 20.04 — cannot use an array
+<code>PROMPT_COMMAND</code>, and there the old race is still live.</p>
 
 <p>Two caveats. On Debian and Ubuntu, <code>/etc/profile.d/</code> is sourced only for
 <em>login</em> shells, so interactive non-login shells will not pick it up; Fedora and
