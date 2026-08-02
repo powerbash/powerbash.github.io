@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "powerbash",
+      "type": "skill-md",
+      "description": "Install and configure powerbash, a powerline-style bash prompt in pure bash. Use when a user wants git branch state, path, or return code in their bash prompt, asks to set up or customize powerbash, or wants their prompt to stop being slow in a git repository.",
+      "url": "https://powerbash.org/.well-known/agent-skills/powerbash/SKILL.md",
+      "digest": "sha256:8fedc9bb88bff77641b4e8b5ca857dce3fa70ec176f1cb5d7f56012264dd32c2"
+    }
+  ]
+}
