@@ -1,0 +1,54 @@
+# powerbash
+
+> A powerline-style bash prompt in pure bash. One script you source into your
+> shell — no dependencies, no daemon, no patched fonts, no root. Runs on Linux,
+> macOS, and WSL, on bash 3.2 and newer.
+
+powerbash shows the git branch and its state, the path, the return code of the
+last command, and a handful of other segments, directly in `PS1`. Every segment
+is a `POWERBASH_*` environment variable; the `powerbash` command sets them and
+`powerbash config save` persists them to `~/.config/powerbashrc`.
+
+Install with `brew install powerbash/powerbash/powerbash`, or
+`curl -s https://get.powerbash.org | bash` on machines without Homebrew.
+
+## Docs
+
+- [Documentation](https://powerbash.org/docs/): install, every subcommand, the
+  configuration variables, performance on slow filesystems, and uninstalling.
+- [Requirements](https://powerbash.org/docs/#requirements): bash 3.2+, a UTF-8
+  locale, and optionally `tput` and `git`.
+- [Install](https://powerbash.org/docs/#install): Homebrew, the install script,
+  or by hand. All three install into your own account and need no root.
+- [Configuration variables](https://powerbash.org/docs/#configuration): the full
+  table of `POWERBASH_*` variables, their accepted values, and their defaults.
+- [Saving settings](https://powerbash.org/docs/#saving): `powerbash config
+  save|load|default`, and why the config file is parsed rather than sourced.
+- [Performance on slow filesystems](https://powerbash.org/docs/#performance):
+  `git skip` and `git timeout`, for WSL and network mounts.
+- [Uninstall](https://powerbash.org/docs/#uninstall)
+
+## Agent skills
+
+- [powerbash skill](https://powerbash.org/.well-known/agent-skills/powerbash/SKILL.md):
+  installing and configuring powerbash on a user's machine.
+- [Skills index](https://powerbash.org/.well-known/agent-skills/index.json)
+
+## Source
+
+- [Source repository](https://github.com/napalm255/powerbash): the script itself,
+  plus `AGENTS.md` describing the architecture and the constraints on changes.
+- [Download](https://download.powerbash.org/powerbash.sh): the current
+  `powerbash.sh`, served verbatim.
+- [Install script](https://get.powerbash.org): served verbatim; it is both the
+  web page and the script.
+- [Homebrew tap](https://github.com/napalm255/homebrew-powerbash)
+- [Issues](https://github.com/napalm255/powerbash/issues)
+
+## Optional
+
+- [Multi-user installs](https://powerbash.org/docs/#global): possible via
+  `/etc/profile.d/`, discouraged, and Linux only. Explains the `z_` filename
+  prefix and the `PROMPT_COMMAND` ordering race it works around.
+- [term](https://powerbash.org/docs/#term): for when you SSH into a machine that
+  does not have your terminal's terminfo entry and the colors disappear.
