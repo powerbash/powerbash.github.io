@@ -5,9 +5,74 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="powerbash is a powerline-style bash prompt in pure bash. One script, no dependencies, no patched fonts. Runs on Linux, macOS, and WSL.">
 <meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfaf8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131519" media="(prefers-color-scheme: dark)">
 <title>powerbash — a powerline-style bash prompt in pure bash</title>
+<link rel="canonical" href="https://powerbash.org/">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="powerbash">
+<meta property="og:title" content="powerbash — a powerline-style bash prompt in pure bash">
+<meta property="og:description" content="One script, no dependencies, no patched fonts. Branch, dirty state, and last return code right where you are already looking. Linux, macOS, and WSL.">
+<meta property="og:url" content="https://powerbash.org/">
+<meta property="og:image" content="https://powerbash.org/og.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The powerbash prompt: napalm, webapp, a blue git segment reading main + 1 ahead, and a green dollar sign.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="powerbash — a powerline-style bash prompt in pure bash">
+<meta name="twitter:description" content="One script, no dependencies, no patched fonts. Branch, dirty state, and last return code right where you are already looking.">
+<meta name="twitter:image" content="https://powerbash.org/og.png">
+
 <link rel="icon" href="favicon.ico">
 <link rel="stylesheet" href="css/main.css">
+
+<!-- Data, not behaviour: application/ld+json is never executed. The page still
+     runs no script and makes no external request. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://powerbash.org/#website",
+      "url": "https://powerbash.org/",
+      "name": "powerbash",
+      "description": "A powerline-style bash prompt in pure bash.",
+      "inLanguage": "en"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://powerbash.org/#software",
+      "name": "powerbash",
+      "url": "https://powerbash.org/",
+      "description": "A powerline-style bash prompt in pure bash. One script sourced into your shell, showing the git branch and its state, the path, the return code of the last command, and more. No dependencies, no daemon, no patched fonts, no root.",
+      "applicationCategory": "DeveloperApplication",
+      "applicationSubCategory": "Command line tool",
+      "operatingSystem": "Linux, macOS, Windows (WSL)",
+      "softwareRequirements": "bash 3.2 or newer, a UTF-8 locale",
+      "image": "https://powerbash.org/og.png",
+      "license": "https://opensource.org/licenses/MIT",
+      "codeRepository": "https://github.com/napalm255/powerbash",
+      "downloadUrl": "https://download.powerbash.org/powerbash.sh",
+      "installUrl": "https://powerbash.org/#install",
+      "softwareHelp": "https://powerbash.org/docs/",
+      "isAccessibleForFree": true,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "napalm255",
+        "url": "https://github.com/napalm255"
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 

@@ -940,13 +940,18 @@ footer nav {
   }
 }
 
-.toc h2 {
+/* A <p>, not a heading -- see the comment on the <nav> in docs/index.html.
+   That means the `margin: 0` and tight line-height from the h1,h2,h3 rule no
+   longer apply, so both are restated here; without the margin reset the first
+   label would push the whole sidebar down by its own leading. */
+.toc-head {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--ink-muted);
   font-weight: 400;
-  margin-bottom: 0.75rem;
+  line-height: 1.1;
+  margin: 0 0 0.75rem;
 }
 
 .toc ul {
