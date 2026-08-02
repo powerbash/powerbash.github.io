@@ -238,6 +238,14 @@ Python ones.</p>
 palette when the terminal reports 256 colors or more, and an 8-color palette
 otherwise.</p>
 
+<p>The case you actually need this for: your terminal ships its own terminfo entry —
+Ghostty sets <code>TERM=xterm-ghostty</code>, WezTerm sets <code>wezterm</code> — and
+you SSH into a machine that does not have it. <code>tput</code> there cannot resolve
+the name, so powerbash renders a plain, uncolored prompt. Naming a <code>TERM</code>
+the remote does know brings the colors back:</p>
+
+<pre>powerbash term xterm-256color</pre>
+
 <h2 id="other">help, version, reload</h2>
 
 <pre>powerbash help      <span class="hint"># usage</span>
