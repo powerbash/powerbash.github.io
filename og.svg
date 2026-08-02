@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Social preview source. 1200x630, the size Open Graph and Twitter expect.
+     og.png is rendered from this file; regenerate it after any edit by
+     running `make og`, which drives headless chromium.
+
+     Colors are the same eight the prompt actually emits; see the comment at
+     the top of css/main.css. Segment widths assume a monospace advance of
+     0.6em at 32px, and text is centered in each block so that a font
+     substitution shifts the glyphs rather than overflowing the color. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630"
+     viewBox="0 0 1200 630" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', 'Liberation Mono', monospace">
+
+  <rect width="1200" height="630" fill="#131519"/>
+  <rect x="0" y="0" width="1200" height="6" fill="#1f5fbf"/>
+
+  <text x="90" y="150" fill="#ffffff" font-size="82" font-weight="700"
+        letter-spacing="-2">powerbash</text>
+  <text x="90" y="205" fill="#8b9099" font-size="29">a powerline-style bash prompt in pure bash</text>
+
+  <!-- terminal -->
+  <rect x="90" y="270" width="1020" height="210" rx="14"
+        fill="#1b1d21" stroke="#2b2f36" stroke-width="2"/>
+
+  <g font-size="32">
+    <!-- user: bright white on bright black -->
+    <rect x="130" y="345" width="154" height="54" fill="#4b5058"/>
+    <text x="207" y="383" fill="#ffffff" text-anchor="middle">napalm</text>
+
+    <!-- path: white on bright black -->
+    <rect x="284" y="345" width="154" height="54" fill="#4b5058"/>
+    <text x="361" y="383" fill="#d4d4d4" text-anchor="middle">webapp</text>
+
+    <!-- git: bright white on blue -->
+    <rect x="438" y="345" width="250" height="54" fill="#1f5fbf"/>
+    <text x="563" y="383" fill="#ffffff" text-anchor="middle">»main + ⇡1</text>
+
+    <!-- symbol: bright white on green -->
+    <rect x="688" y="345" width="58" height="54" fill="#2f8f46"/>
+    <text x="717" y="383" fill="#ffffff" text-anchor="middle">$</text>
+
+    <text x="775" y="383" fill="#8b9099">git push</text>
+  </g>
+
+  <text x="90" y="565" fill="#d7d9dd" font-size="28">powerbash.org</text>
+  <text x="1110" y="565" fill="#5c6068" font-size="26" text-anchor="end">no dependencies · no patched fonts · bash 3.2+</text>
+</svg>
