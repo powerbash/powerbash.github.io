@@ -162,20 +162,36 @@ echo 'source ~/powerbash.sh' &gt;&gt; ~/.bashrc</pre>
 <section id="build">
   <div class="wrap">
     <div class="section-head">
-      <p class="eyebrow">every segment is a toggle</p>
+      <p class="eyebrow">every segment, every mode</p>
       <h2>Build a prompt.</h2>
-      <p class="lede">Turn segments on and off. The prompt updates, and so does the
-        list of commands that would get you there — the same ones you would type into
-        a shell, all of them tab-completable.</p>
+      <p class="lede">Turn segments on and off, and pick how the ones with modes
+        render. The prompt updates, and so does the list of commands that would get
+        you there — the same ones you would type into a shell, all of them
+        tab-completable. Nothing listed means you are on the defaults already.</p>
     </div>
 
     <!-- There is no script on this page. These controls are checkboxes and
          radios, and the rules in main.css key off :checked. They have to be
          direct siblings of .config: the ~ combinator cannot reach out of a
-         wrapper, so they are hidden individually rather than as a group. -->
-    <input class="config-input" type="checkbox" id="c-venv">
+         wrapper, so they are hidden individually rather than as a group.
+
+         Every control starts on the value powerbash actually ships with, so
+         the command list below means exactly one thing: the diff from the
+         defaults. That is why `py virtualenv on`, `host auto` and `path
+         working` are absent from it -- picking a default emits nothing.
+
+         Keep multi-valued settings as radios. host was a checkbox once, which
+         left `auto` unrepresentable and `powerbash host on` missing from the
+         list entirely, so the section quietly lied about what you would
+         type. -->
+    <input class="config-input" type="radio" name="venvmode" id="v-off">
+    <input class="config-input" type="radio" name="venvmode" id="v-on" checked>
+    <input class="config-input" type="radio" name="venvmode" id="v-short">
+    <input class="config-input" type="radio" name="venvmode" id="v-icon">
     <input class="config-input" type="checkbox" id="c-user" checked>
-    <input class="config-input" type="checkbox" id="c-host">
+    <input class="config-input" type="radio" name="hostmode" id="h-off">
+    <input class="config-input" type="radio" name="hostmode" id="h-auto" checked>
+    <input class="config-input" type="radio" name="hostmode" id="h-on">
     <input class="config-input" type="radio" name="pathmode" id="p-off">
     <input class="config-input" type="radio" name="pathmode" id="p-full">
     <input class="config-input" type="radio" name="pathmode" id="p-working" checked>
@@ -183,14 +199,17 @@ echo 'source ~/powerbash.sh' &gt;&gt; ~/.bashrc</pre>
     <input class="config-input" type="radio" name="pathmode" id="p-short">
     <input class="config-input" type="radio" name="pathmode" id="p-mini">
     <input class="config-input" type="checkbox" id="c-git" checked>
-    <input class="config-input" type="checkbox" id="c-jobs">
+    <input class="config-input" type="checkbox" id="c-jobs" checked>
+    <input class="config-input" type="checkbox" id="c-symbol" checked>
     <input class="config-input" type="checkbox" id="c-rc" checked>
 
     <div class="config">
       <div class="config-preview">
         <div class="terminal">
           <p class="prompt">
-            <span class="seg seg-venv">▶ .venv</span><span
+            <span class="seg seg-venv venv-on">▶ webapp-3.12</span><span
+              class="seg seg-venv venv-short">▶ webap</span><span
+              class="seg seg-venv venv-icon">▶</span><span
               class="seg seg-user">napalm</span><span
               class="seg seg-host">@build-01</span><span
               class="seg seg-path path-full">/home/napalm/src/webapp/src/components/widgets</span><span
@@ -198,13 +217,13 @@ echo 'source ~/powerbash.sh' &gt;&gt; ~/.bashrc</pre>
               class="seg seg-path path-parted">/home/.../components/widgets</span><span
               class="seg seg-path path-short">..c/components/widgets</span><span
               class="seg seg-path path-mini">/h/n/s/w/s/c/widgets</span><span
-              class="seg seg-git">»feature/prompt-redesign + ⇡1</span><span
+              class="seg seg-git">»main + ⇡1</span><span
               class="seg seg-jobs">2</span><span
               class="seg seg-symbol">$</span><span
               class="seg seg-rc">127</span>
           </p>
         </div>
-<pre class="commands"><span class="hint"># type these to keep what you picked</span><span class="cmd cmd-venv-off">powerbash py virtualenv off</span><span class="cmd cmd-user-off">powerbash user off</span><span class="cmd cmd-host-off">powerbash host off</span><span class="cmd cmd-p-off">powerbash path off</span><span class="cmd cmd-p-full">powerbash path full</span><span class="cmd cmd-p-parted">powerbash path parted</span><span class="cmd cmd-p-short">powerbash path short</span><span class="cmd cmd-p-mini">powerbash path mini</span><span class="cmd cmd-git-off">powerbash git off</span><span class="cmd cmd-jobs-off">powerbash jobs off</span><span class="cmd cmd-rc-off">powerbash rc off</span><span class="cmd cmd-save">powerbash config save</span></pre>
+<pre class="commands"><span class="hint"># type these to keep what you picked</span><span class="cmd cmd-v-off">powerbash py virtualenv off</span><span class="cmd cmd-v-short">powerbash py virtualenv short</span><span class="cmd cmd-v-icon">powerbash py virtualenv icon</span><span class="cmd cmd-user-off">powerbash user off</span><span class="cmd cmd-h-off">powerbash host off</span><span class="cmd cmd-h-on">powerbash host on</span><span class="cmd cmd-p-off">powerbash path off</span><span class="cmd cmd-p-full">powerbash path full</span><span class="cmd cmd-p-parted">powerbash path parted</span><span class="cmd cmd-p-short">powerbash path short</span><span class="cmd cmd-p-mini">powerbash path mini</span><span class="cmd cmd-git-off">powerbash git off</span><span class="cmd cmd-jobs-off">powerbash jobs off</span><span class="cmd cmd-symbol-off">powerbash symbol off</span><span class="cmd cmd-rc-off">powerbash rc off</span><span class="cmd cmd-save">powerbash config save</span></pre>
       </div>
 
       <div class="controls">
@@ -214,13 +233,36 @@ echo 'source ~/powerbash.sh' &gt;&gt; ~/.bashrc</pre>
         <div class="control-group">
           <span class="group-label">Show</span>
           <div class="control-list">
-            <label class="lbl-venv" for="c-venv">virtualenv</label>
             <label class="lbl-user" for="c-user">user</label>
-            <label class="lbl-host" for="c-host">host</label>
             <label class="lbl-git" for="c-git">git</label>
             <label class="lbl-jobs" for="c-jobs">jobs</label>
+            <label class="lbl-symbol" for="c-symbol">symbol</label>
             <label class="lbl-rc" for="c-rc">return code</label>
           </div>
+        </div>
+
+        <div class="control-group">
+          <span class="group-label">Virtualenv</span>
+          <div class="control-list">
+            <label class="lbl-v-off" for="v-off">off</label>
+            <label class="lbl-v-on" for="v-on">on</label>
+            <label class="lbl-v-short" for="v-short">short</label>
+            <label class="lbl-v-icon" for="v-icon">icon</label>
+          </div>
+          <p class="control-note">The segment appears only while an environment is
+            active. <code>short</code> keeps the first five characters of its name.</p>
+        </div>
+
+        <div class="control-group">
+          <span class="group-label">Host</span>
+          <div class="control-list">
+            <label class="lbl-h-off" for="h-off">off</label>
+            <label class="lbl-h-auto" for="h-auto">auto</label>
+            <label class="lbl-h-on" for="h-on">on</label>
+          </div>
+          <p class="control-note"><code>auto</code> shows the host only over SSH, and
+            the preview is a local shell — so it looks like <code>off</code> here. The
+            command below is the difference.</p>
         </div>
 
         <div class="control-group">
@@ -258,7 +300,7 @@ echo 'source ~/powerbash.sh' &gt;&gt; ~/.bashrc</pre>
         <tbody>
           <tr>
             <td data-label="Segment">virtualenv</td>
-            <td data-label="Looks like"><span class="chip seg-venv">▶ .venv</span></td>
+            <td data-label="Looks like"><span class="chip seg-venv">▶ webapp-3.12</span></td>
             <td data-label="Tells you">A Python or Conda environment is active. <code>short</code> trims the
               name to five characters; <code>icon</code> drops the name entirely.</td>
           </tr>

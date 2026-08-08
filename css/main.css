@@ -507,6 +507,16 @@ section:first-of-type {
   gap: 0.4rem;
 }
 
+/* Scoped, not a bare .control-note: `.controls p` above is the panel intro,
+   and at (0,1,1) it would out-specify a lone class no matter the order here.
+   Its bottom margin is sized to clear the first group; this sits inside one. */
+.controls .control-note {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--ink-muted);
+  margin: 0.6rem 0 0;
+}
+
 .control-list label {
   font-family: var(--mono);
   font-size: 0.8125rem;
@@ -541,12 +551,18 @@ section:first-of-type {
 }
 
 /* checked states, one per control */
-#c-venv:checked ~ .config .lbl-venv,
-#c-host:checked ~ .config .lbl-host,
 #c-user:checked ~ .config .lbl-user,
 #c-git:checked ~ .config .lbl-git,
 #c-jobs:checked ~ .config .lbl-jobs,
+#c-symbol:checked ~ .config .lbl-symbol,
 #c-rc:checked ~ .config .lbl-rc,
+#v-off:checked ~ .config .lbl-v-off,
+#v-on:checked ~ .config .lbl-v-on,
+#v-short:checked ~ .config .lbl-v-short,
+#v-icon:checked ~ .config .lbl-v-icon,
+#h-off:checked ~ .config .lbl-h-off,
+#h-auto:checked ~ .config .lbl-h-auto,
+#h-on:checked ~ .config .lbl-h-on,
 #p-off:checked ~ .config .lbl-p-off,
 #p-full:checked ~ .config .lbl-p-full,
 #p-working:checked ~ .config .lbl-p-working,
@@ -560,12 +576,18 @@ section:first-of-type {
 
 /* The input itself is off-screen, so its focus ring has to be drawn on the
    label that stands in for it. */
-#c-venv:focus-visible ~ .config .lbl-venv,
-#c-host:focus-visible ~ .config .lbl-host,
 #c-user:focus-visible ~ .config .lbl-user,
 #c-git:focus-visible ~ .config .lbl-git,
 #c-jobs:focus-visible ~ .config .lbl-jobs,
+#c-symbol:focus-visible ~ .config .lbl-symbol,
 #c-rc:focus-visible ~ .config .lbl-rc,
+#v-off:focus-visible ~ .config .lbl-v-off,
+#v-on:focus-visible ~ .config .lbl-v-on,
+#v-short:focus-visible ~ .config .lbl-v-short,
+#v-icon:focus-visible ~ .config .lbl-v-icon,
+#h-off:focus-visible ~ .config .lbl-h-off,
+#h-auto:focus-visible ~ .config .lbl-h-auto,
+#h-on:focus-visible ~ .config .lbl-h-on,
 #p-off:focus-visible ~ .config .lbl-p-off,
 #p-full:focus-visible ~ .config .lbl-p-full,
 #p-working:focus-visible ~ .config .lbl-p-working,
@@ -577,13 +599,35 @@ section:first-of-type {
 }
 
 /* segments hidden unless their control is on */
-#c-venv:not(:checked) ~ .config .seg-venv,
-#c-host:not(:checked) ~ .config .seg-host,
 #c-user:not(:checked) ~ .config .seg-user,
 #c-git:not(:checked) ~ .config .seg-git,
 #c-jobs:not(:checked) ~ .config .seg-jobs,
+#c-symbol:not(:checked) ~ .config .seg-symbol,
 #c-rc:not(:checked) ~ .config .seg-rc {
   display: none;
+}
+
+/* Both `off` and `auto` hide the host here, and that is not a shortcut: the
+   preview is a local shell, which is exactly where `auto` resolves to off.
+   The two states differ in the command list, not in the prompt. */
+.config .seg-host {
+  display: none;
+}
+
+#h-on:checked ~ .config .seg-host {
+  display: block;
+}
+
+/* exactly one virtualenv mode shows at a time -- same shape as the path modes
+   below. `icon` is the bare symbol with no name after it. */
+.config .seg-venv {
+  display: none;
+}
+
+#v-on:checked ~ .config .venv-on,
+#v-short:checked ~ .config .venv-short,
+#v-icon:checked ~ .config .venv-icon {
+  display: block;
 }
 
 /* exactly one path mode shows at a time */
@@ -604,12 +648,20 @@ section:first-of-type {
   display: none;
 }
 
-#c-venv:not(:checked) ~ .config .cmd-venv-off,
-#c-host:not(:checked) ~ .config .cmd-host-off,
+/* Only a non-default choice earns a line, which is why `py virtualenv on`,
+   `host auto` and `path working` are absent: they are the defaults, so there
+   is nothing to type. Every other value needs one -- `host on` went missing
+   for a while precisely because `auto` had nowhere to live. */
 #c-user:not(:checked) ~ .config .cmd-user-off,
 #c-git:not(:checked) ~ .config .cmd-git-off,
 #c-jobs:not(:checked) ~ .config .cmd-jobs-off,
+#c-symbol:not(:checked) ~ .config .cmd-symbol-off,
 #c-rc:not(:checked) ~ .config .cmd-rc-off,
+#v-off:checked ~ .config .cmd-v-off,
+#v-short:checked ~ .config .cmd-v-short,
+#v-icon:checked ~ .config .cmd-v-icon,
+#h-off:checked ~ .config .cmd-h-off,
+#h-on:checked ~ .config .cmd-h-on,
 #p-off:checked ~ .config .cmd-p-off,
 #p-full:checked ~ .config .cmd-p-full,
 #p-parted:checked ~ .config .cmd-p-parted,
